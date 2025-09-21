@@ -70,7 +70,7 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                                     <option value={15}>15 Questions</option>
                                     <option value={20}>20 Questions</option>
                                     <option value={25}>25 Questions</option>
-                                    <option value={30}>30 Questions</option>
+                                    <option value={40}>30 Questions</option>
                                 </select>
                             </div>
 

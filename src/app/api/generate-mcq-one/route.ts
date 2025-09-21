@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 
 // MCQ schema definition with validation rules
 const mcqSchema = z.object({

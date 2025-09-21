@@ -24,7 +24,6 @@ import {
   Rocket,
   Shield,
   Smartphone,
-  Eye,
   Heart
 } from 'lucide-react';
 
@@ -408,8 +407,8 @@ const QuizHomepage = () => {
 
                   <div className="space-y-4">
                     <div className="bg-white/10 rounded-xl p-4 group-hover:bg-white/15 transition-all duration-300">
-                      <div className="text-white text-sm mb-2 text-purple-200">Physics - Light & Optics</div>
-                      <div className="text-white font-medium">What is the speed of light in vacuum?</div>
+                      <div className="text-sm mb-2 text-purple-200">Physics - Light & Optics</div>
+                      <div className="font-medium">What is the speed of light in vacuum?</div>
                       <div className="mt-3 bg-blue-500/20 rounded-lg p-2 text-xs text-blue-200">
                         💡 Hint: This fundamental constant is approximately 3 × 10⁸ m/s
                       </div>
