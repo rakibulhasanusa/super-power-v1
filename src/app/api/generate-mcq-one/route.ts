@@ -75,14 +75,13 @@ export async function POST(request: NextRequest) {
             Question: "What is the value of π to 4 decimal places?"
             A. 3.1415  B. 3.1416  C. 3.1417  D. 3.1414`;
 
-        // AI মডেল দিয়ে MCQ জেনারেট করা
         const { object } = await generateObject({
-            model: "gpt-4o", // AI Gateway স্বয়ংক্রিয়ভাবে রাউট করবে
+            model: "gpt-4o",  // Use a high-capacity model for better quality
             schema: z.object({
                 mcqs: z.array(mcqSchema).length(count)
             }),
             prompt: basePrompt,
-            temperature: 0.7, // কিছুটা creativity এর জন্য
+            temperature: 0.7, // Balanced creativity and accuracy
         });
 
         console.log('Generated MCQs:', {
@@ -110,7 +109,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         console.error('MCQ Generation Error:', error);
 
-        // ভিন্ন ধরনের এরর হ্যান্ডলিং
+        //  Handle Zod validation errors specifically
         if (error instanceof z.ZodError) {
             return NextResponse.json(
                 {
@@ -143,7 +142,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// GET মেথড যোগ করা - API টেস্ট করার জন্য
+// Simple GET endpoint to verify API is running
 export async function GET() {
     return NextResponse.json({
         message: 'MCQ Generator API is running',

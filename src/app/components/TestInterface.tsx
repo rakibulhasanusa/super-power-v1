@@ -13,7 +13,7 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [answers, setAnswers] = useState<Record<number, string>>({});
     const [showSubmitModal, setShowSubmitModal] = useState(false);
-    const timer = useTimer(13);
+    const timer = useTimer(mcqs.length); // 1 minute per question
 
     useEffect(() => {
         timer.startTimer();
