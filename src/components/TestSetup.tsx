@@ -9,7 +9,7 @@ interface TestSetupProps {
 const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        count: 10,
+        count: 5,
         subject: 'Mathematics',
         topic: '',
         difficulty: 'medium' as 'easy' | 'medium' | 'hard'
@@ -47,7 +47,7 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold text-gray-800 mb-4">📝 MCQ Test</h1>
                     <p className="text-lg text-gray-600">
-                        Take a timed multiple choice test with 13 minutes to complete
+                        Take a timed multiple choice test with 1 minute per question
                     </p>
                 </div>
 
@@ -125,7 +125,7 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                             <div className="flex items-center">
                                 <div className="text-amber-600 mr-3">⏰</div>
                                 <div>
-                                    <p className="font-semibold text-amber-800">Test Duration: 13 Minutes</p>
+                                    <p className="font-semibold text-amber-800">Test Duration: {formData.count} Minutes</p>
                                     <p className="text-sm text-amber-700">
                                         The test will automatically submit when time expires. Make sure you have a stable internet connection.
                                     </p>

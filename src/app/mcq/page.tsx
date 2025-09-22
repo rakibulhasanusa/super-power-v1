@@ -1,8 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import TestSetup from '@/app/components/TestSetup';
-import TestInterface from '@/app/components/TestInterface';
-import TestResults from '@/app/components/TestResults';
+import TestSetup from '@/components/TestSetup';
+import TestInterface from '@/components/TestInterface';
+import TestResults from '@/components/TestResults';
 import { MCQ, TestResult } from '@/types/mcq';
 
 type AppState = 'setup' | 'testing' | 'results';
