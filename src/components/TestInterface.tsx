@@ -1,40 +1,53 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { MCQ, TestResult } from '@/types/mcq';
-import { useTimer } from '@/hooks/useTimer';
+"use client"
+import type React from "react"
+import { useState, useEffect } from "react"
+import type { MCQ, TestResult } from "@/types/mcq"
+import { useTimer } from "@/hooks/useTimer"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
+import { Clock, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface TestInterfaceProps {
-    mcqs: MCQ[];
-    onTestComplete: (result: TestResult) => void;
-    onBackToSetup: () => void;
+    mcqs: MCQ[]
+    onTestComplete: (result: TestResult) => void
+    onBackToSetup: () => void
 }
 
 const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onBackToSetup }) => {
-    const [currentQuestion, setCurrentQuestion] = useState(0);
-    const [answers, setAnswers] = useState<Record<number, string>>({});
-    const [showSubmitModal, setShowSubmitModal] = useState(false);
-    const timer = useTimer(mcqs.length); // 1 minute per question
+    const [currentQuestion, setCurrentQuestion] = useState(0)
+    const [answers, setAnswers] = useState<Record<number, string>>({})
+    const [showSubmitModal, setShowSubmitModal] = useState(false)
+    const timer = useTimer(mcqs.length) // 1 minute per question
 
     useEffect(() => {
-        timer.startTimer();
-    }, []);
+        timer.startTimer()
+    }, [])
 
     useEffect(() => {
         if (timer.hasEnded) {
-            handleSubmitTest();
+            handleSubmitTest()
         }
-    }, [timer.hasEnded]);
+    }, [timer.hasEnded])
 
     const handleAnswerSelect = (questionId: number, answer: string) => {
-        setAnswers(prev => ({ ...prev, [questionId]: answer }));
-    };
+        setAnswers((prev) => ({ ...prev, [questionId]: answer }))
+    }
 
     const handleSubmitTest = () => {
-        timer.stopTimer();
+        timer.stopTimer()
 
-        const correctAnswers = mcqs.filter(mcq => answers[mcq.id] === mcq.correctAnswer).length;
-        const wrongAnswers = mcqs.filter(mcq => answers[mcq.id] && answers[mcq.id] !== mcq.correctAnswer).length;
-        const unanswered = mcqs.length - Object.keys(answers).length;
+        const correctAnswers = mcqs.filter((mcq) => answers[mcq.id] === mcq.correctAnswer).length
+        const wrongAnswers = mcqs.filter((mcq) => answers[mcq.id] && answers[mcq.id] !== mcq.correctAnswer).length
+        const unanswered = mcqs.length - Object.keys(answers).length
 
         const result: TestResult = {
             totalQuestions: mcqs.length,
@@ -45,51 +58,46 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
             percentage: Math.round((correctAnswers / mcqs.length) * 100),
             timeTaken: timer.getElapsedTime(),
             answers,
-            mcqs
-        };
+            mcqs,
+        }
 
-        onTestComplete(result);
-    };
+        onTestComplete(result)
+    }
 
-    const getAnsweredCount = () => Object.keys(answers).length;
+    const getAnsweredCount = () => Object.keys(answers).length
 
     const navigateToQuestion = (index: number) => {
-        setCurrentQuestion(index);
-    };
+        setCurrentQuestion(index)
+    }
 
-    const currentMCQ = mcqs[currentQuestion];
+    const currentMCQ = mcqs[currentQuestion]
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Header with Timer */}
-            <div className="bg-white shadow-sm border-b">
+        <div className="min-h-screen bg-muted/30">
+            <div className="bg-background shadow-sm border-b">
                 <div className="max-w-6xl mx-auto px-6 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                            <h1 className="text-xl font-semibold text-gray-800">MCQ Test</h1>
-                            <div className="text-sm text-gray-600">
+                            <h1 className="text-xl font-semibold text-foreground">MCQ Test</h1>
+                            <Badge variant="secondary">
                                 Question {currentQuestion + 1} of {mcqs.length}
-                            </div>
+                            </Badge>
                         </div>
 
                         <div className="flex items-center space-x-6">
-                            <div className="text-sm text-gray-600">
+                            <Badge variant="outline">
                                 Answered: {getAnsweredCount()}/{mcqs.length}
-                            </div>
+                            </Badge>
 
-                            <div className={`px-4 py-2 rounded-lg font-mono text-lg font-semibold ${timer.timeLeft <= 120 ? 'bg-red-100 text-red-600' :
-                                timer.timeLeft <= 300 ? 'bg-yellow-100 text-yellow-600' :
-                                    'bg-green-100 text-green-600'
-                                }`}>
-                                ⏱️ {timer.formatTime()}
-                            </div>
-
-                            <button
-                                onClick={() => setShowSubmitModal(true)}
-                                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+                            <Badge
+                                variant={timer.timeLeft <= 120 ? "destructive" : timer.timeLeft <= 300 ? "secondary" : "default"}
+                                className="px-4 py-2 font-mono text-lg font-semibold"
                             >
-                                Submit Test
-                            </button>
+                                <Clock className="mr-2 h-4 w-4" />
+                                {timer.formatTime()}
+                            </Badge>
+
+                            <Button onClick={() => setShowSubmitModal(true)}>Submit Test</Button>
                         </div>
                     </div>
                 </div>
@@ -97,123 +105,115 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
 
             <div className="max-w-6xl mx-auto p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    {/* Question Navigation */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white rounded-lg shadow-sm p-4 sticky top-6">
-                            <h3 className="font-semibold text-gray-800 mb-3">Questions</h3>
-                            <div className="grid grid-cols-5 lg:grid-cols-4 gap-2">
-                                {mcqs.map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => navigateToQuestion(index)}
-                                        className={`w-10 h-10 rounded-lg text-sm font-semibold transition-all ${currentQuestion === index
-                                            ? 'bg-indigo-600 text-white'
-                                            : answers[mcqs[index].id]
-                                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                            }`}
-                                    >
-                                        {index + 1}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                        <Card className="sticky top-6">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-base">Questions</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-5 lg:grid-cols-4 gap-2">
+                                    {mcqs.map((_, index) => (
+                                        <Button
+                                            key={index}
+                                            onClick={() => navigateToQuestion(index)}
+                                            variant={
+                                                currentQuestion === index ? "default" : answers[mcqs[index].id] ? "secondary" : "outline"
+                                            }
+                                            size="sm"
+                                            className="w-10 h-10 p-0"
+                                        >
+                                            {index + 1}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
 
-                    {/* Current Question */}
                     <div className="lg:col-span-3">
-                        <div className="bg-white rounded-lg shadow-sm p-6">
-                            <div className="mb-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-lg font-semibold text-gray-800">
-                                        Question {currentQuestion + 1}
-                                    </h2>
+                        <Card>
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="text-lg">Question {currentQuestion + 1}</CardTitle>
                                     <div className="flex items-center space-x-2">
-                                        <span className={`px-2 py-1 rounded text-xs font-semibold ${currentMCQ.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-                                            currentMCQ.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-red-100 text-red-800'
-                                            }`}>
+                                        <Badge
+                                            variant={
+                                                currentMCQ.difficulty === "easy"
+                                                    ? "secondary"
+                                                    : currentMCQ.difficulty === "medium"
+                                                        ? "default"
+                                                        : "destructive"
+                                            }
+                                        >
                                             {currentMCQ.difficulty.toUpperCase()}
-                                        </span>
-                                        <span className="text-xs text-gray-500">
+                                        </Badge>
+                                        <Badge variant="outline" className="text-xs">
                                             {currentMCQ.subject} • {currentMCQ.topic}
-                                        </span>
+                                        </Badge>
                                     </div>
                                 </div>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <p className="text-foreground text-lg leading-relaxed text-pretty">{currentMCQ.question}</p>
 
-                                <p className="text-gray-800 text-lg leading-relaxed">
-                                    {currentMCQ.question}
-                                </p>
-                            </div>
+                                <div className="space-y-3">
+                                    {currentMCQ.options.map((option) => (
+                                        <Button
+                                            key={option.label}
+                                            onClick={() => handleAnswerSelect(currentMCQ.id, option.label)}
+                                            variant={answers[currentMCQ.id] === option.label ? "default" : "outline"}
+                                            className="w-full text-left p-4 h-auto justify-start"
+                                        >
+                                            <span className="font-semibold mr-3">{option.label}.</span>
+                                            <span>{option.text}</span>
+                                        </Button>
+                                    ))}
+                                </div>
 
-                            <div className="space-y-3 mb-8">
-                                {currentMCQ.options.map((option) => (
-                                    <button
-                                        key={option.label}
-                                        onClick={() => handleAnswerSelect(currentMCQ.id, option.label)}
-                                        className={`w-full text-left p-4 border-2 rounded-lg transition-all ${answers[currentMCQ.id] === option.label
-                                            ? 'border-indigo-500 bg-indigo-50'
-                                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                                            }`}
+                                <div className="flex justify-between pt-4">
+                                    <Button
+                                        onClick={() => navigateToQuestion(Math.max(0, currentQuestion - 1))}
+                                        disabled={currentQuestion === 0}
+                                        variant="ghost"
                                     >
-                                        <span className="font-semibold text-gray-700 mr-3">
-                                            {option.label}.
-                                        </span>
-                                        <span className="text-gray-800">{option.text}</span>
-                                    </button>
-                                ))}
-                            </div>
+                                        <ChevronLeft className="mr-2 h-4 w-4" />
+                                        Previous
+                                    </Button>
 
-                            <div className="flex justify-between">
-                                <button
-                                    onClick={() => navigateToQuestion(Math.max(0, currentQuestion - 1))}
-                                    disabled={currentQuestion === 0}
-                                    className="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    ← Previous
-                                </button>
-
-                                <button
-                                    onClick={() => navigateToQuestion(Math.min(mcqs.length - 1, currentQuestion + 1))}
-                                    disabled={currentQuestion === mcqs.length - 1}
-                                    className="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    Next →
-                                </button>
-                            </div>
-                        </div>
+                                    <Button
+                                        onClick={() => navigateToQuestion(Math.min(mcqs.length - 1, currentQuestion + 1))}
+                                        disabled={currentQuestion === mcqs.length - 1}
+                                        variant="ghost"
+                                    >
+                                        Next
+                                        <ChevronRight className="ml-2 h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>
 
-            {/* Submit Modal */}
-            {showSubmitModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                        <h3 className="text-lg font-semibold mb-4">Submit Test?</h3>
-                        <p className="text-gray-600 mb-6">
+            <Dialog open={showSubmitModal} onOpenChange={setShowSubmitModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Submit Test?</DialogTitle>
+                        <DialogDescription>
                             You have answered {getAnsweredCount()} out of {mcqs.length} questions.
-                            {getAnsweredCount() < mcqs.length && ' Unanswered questions will be marked as incorrect.'}
-                        </p>
-                        <div className="flex justify-end space-x-3">
-                            <button
-                                onClick={() => setShowSubmitModal(false)}
-                                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSubmitTest}
-                                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
-                            >
-                                Submit Test
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                            {getAnsweredCount() < mcqs.length && " Unanswered questions will be marked as incorrect."}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowSubmitModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleSubmitTest}>Submit Test</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
-    );
-};
+    )
+}
 
-export default TestInterface;
+export default TestInterface

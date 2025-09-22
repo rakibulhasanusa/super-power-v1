@@ -1,160 +1,182 @@
-'use client';
-import React, { useState } from 'react';
-import { MCQ } from '@/types/mcq';
+"use client"
+import type React from "react"
+import { useState } from "react"
+import type { MCQ } from "@/types/mcq"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Clock, Loader2, Rocket } from "lucide-react"
 
 interface TestSetupProps {
-    onStartTest: (mcqs: MCQ[]) => void;
+    onStartTest: (mcqs: MCQ[]) => void
 }
 
 const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         count: 5,
-        subject: 'Mathematics',
-        topic: '',
-        difficulty: 'medium' as 'easy' | 'medium' | 'hard'
-    });
+        subject: "Mathematics",
+        topic: "",
+        difficulty: "medium" as "easy" | "medium" | "hard",
+    })
 
     const subjects = [
-        'Mathematics', 'Physics', 'Chemistry', 'Biology',
-        'History', 'Geography', 'Literature', 'Computer Science', "Accounting",
-    ];
+        "Mathematics",
+        "Physics",
+        "Chemistry",
+        "Biology",
+        "History",
+        "Geography",
+        "Literature",
+        "Computer Science",
+        "Accounting",
+    ]
 
     const handleStartTest = async () => {
-        setLoading(true);
+        setLoading(true)
         try {
-            const response = await fetch('/api/generate-mcq-one', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch("/api/generate-mcq-one", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
-            });
+            })
 
-            const data = await response.json();
+            const data = await response.json()
             if (data.success) {
-                onStartTest(data.mcqs);
+                onStartTest(data.mcqs)
             }
         } catch (error) {
-            console.log({ error });
-            console.error('Failed to generate test:', error);
+            console.log({ error })
+            console.error("Failed to generate test:", error)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 flex items-center justify-center p-6">
+        <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-6">
             <div className="max-w-2xl w-full">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-800 mb-4">📝 MCQ Test</h1>
-                    <p className="text-lg text-gray-600">
+                    <h1 className="text-4xl font-bold text-foreground mb-4 text-balance">MCQ Test Platform</h1>
+                    <p className="text-lg text-muted-foreground text-pretty">
                         Take a timed multiple choice test with 1 minute per question
                     </p>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-xl p-8">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Test Configuration</h2>
-
-                    <div className="space-y-6">
+                <Card className="shadow-xl">
+                    <CardHeader>
+                        <CardTitle className="text-2xl">Test Configuration</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Number of Questions
-                                </label>
-                                <select
-                                    value={formData.count}
-                                    onChange={(e) => setFormData({ ...formData, count: parseInt(e.target.value) })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            <div className="space-y-2 font-mono leading-4 border-black">
+                                <Label htmlFor="question-count">Number of Questions</Label>
+                                <Select
+                                    value={formData.count.toString()}
+                                    onValueChange={(value) => setFormData({ ...formData, count: Number.parseInt(value) })}
                                 >
-                                    <option value={5}>5 Questions</option>
-                                    <option value={10}>10 Questions</option>
-                                    <option value={15}>15 Questions</option>
-                                    <option value={20}>20 Questions</option>
-                                    <option value={25}>25 Questions</option>
-                                    <option value={30}>30 Questions</option>
-                                    <option value={40}>40 Questions</option>
-                                </select>
+                                    <SelectTrigger className="border-foreground border-solid" id="question-count">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="5">5 Questions</SelectItem>
+                                        <SelectItem value="10">10 Questions</SelectItem>
+                                        <SelectItem value="15">15 Questions</SelectItem>
+                                        <SelectItem value="20">20 Questions</SelectItem>
+                                        <SelectItem value="25">25 Questions</SelectItem>
+                                        <SelectItem value="30">30 Questions</SelectItem>
+                                        <SelectItem value="40">40 Questions</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Subject
-                                </label>
-                                <select
+                            <div className="space-y-2">
+                                <Label htmlFor="subject">Subject</Label>
+                                <Select
                                     value={formData.subject}
-                                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    onValueChange={(value) => setFormData({ ...formData, subject: value })}
                                 >
-                                    {subjects.map(subject => (
-                                        <option key={subject} value={subject}>{subject}</option>
-                                    ))}
-                                </select>
+                                    <SelectTrigger className="border-foreground border-solid" id="subject">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {subjects.map((subject) => (
+                                            <SelectItem key={subject} value={subject}>
+                                                {subject}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Topic (Optional)
-                                </label>
-                                <input
+                            <div className="space-y-2">
+                                <Label htmlFor="topic">Topic (Optional)</Label>
+                                <Input className="border-foreground border-solid"
+                                    id="topic"
                                     type="text"
                                     placeholder="e.g., Calculus, World War II"
                                     value={formData.topic}
                                     onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Difficulty Level
-                                </label>
-                                <select
+                            <div className="space-y-2">
+                                <Label htmlFor="difficulty">Difficulty Level</Label>
+                                <Select
                                     value={formData.difficulty}
-                                    onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as typeof formData.difficulty })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    onValueChange={(value) =>
+                                        setFormData({ ...formData, difficulty: value as typeof formData.difficulty })
+                                    }
                                 >
-                                    <option value="easy">Easy</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="hard">Hard</option>
-                                </select>
+                                    <SelectTrigger className="border-foreground border-solid" id="difficulty">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="easy">Easy</SelectItem>
+                                        <SelectItem value="medium">Medium</SelectItem>
+                                        <SelectItem value="hard">Hard</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
 
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                            <div className="flex items-center">
-                                <div className="text-amber-600 mr-3">⏰</div>
-                                <div>
-                                    <p className="font-semibold text-amber-800">Test Duration: {formData.count} Minutes</p>
-                                    <p className="text-sm text-amber-700">
-                                        The test will automatically submit when time expires. Make sure you have a stable internet connection.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <Alert>
+                            <Clock className="h-4 w-4" />
+                            <AlertDescription>
+                                <span className="font-semibold">Test Duration: {formData.count} Minutes</span>
+                                <br />
+                                The test will automatically submit when time expires. Make sure you have a stable internet connection.
+                            </AlertDescription>
+                        </Alert>
 
-                        <button
+                        <Button
                             onClick={handleStartTest}
                             disabled={loading}
-                            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                            className="w-full py-6 text-lg font-semibold"
+                            size="lg"
                         >
                             {loading ? (
-                                <span className="flex items-center justify-center">
-                                    <svg className="animate-spin -ml-1 mr-3 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
+                                <>
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                                     Generating Test...
-                                </span>
+                                </>
                             ) : (
-                                `🚀 Start ${formData.count} Question Test`
+                                <>
+                                    <Rocket className="mr-2 h-5 w-5" />
+                                    Start {formData.count} Question Test
+                                </>
                             )}
-                        </button>
-                    </div>
-                </div>
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default TestSetup;
+export default TestSetup

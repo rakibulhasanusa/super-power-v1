@@ -28,7 +28,9 @@ export default function RootLayout({
 
       >
         <Header />
-        {children}
+        <div className=" mt-20 container mx-auto px-4">
+          {children}
+        </div>
         <Footer />
       </body>
     </html>
