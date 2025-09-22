@@ -198,7 +198,7 @@ const JobCategories = () => {
                       size="sm"
                       className="text-primary hover:text-primary/80 group-hover:translate-x-1 transition-all duration-300"
                     >
-                      <Link href={"/mcq"} >
+                      <Link className="flex items-center" href={"/mcq"} >
                         Start Practice
                         <ChevronRight className="w-4 h-4 ml-1" />
                       </Link>
@@ -491,7 +491,7 @@ const JobPrepHomepage = () => {
                     size="lg"
                     className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 shadow-xl hover:shadow-primary/25 transform hover:-translate-y-1"
                   >
-                    <Link href={"/mcq"} >
+                    <Link className="flex items-center" href={"/mcq"} >
                       <Play className="w-5 h-5 mr-2" />
                       Start Free Practice
                       <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
@@ -594,7 +594,7 @@ const JobPrepHomepage = () => {
                 size="lg"
                 className="bg-gradient-to-r from-secondary to-primary hover:from-secondary/90 hover:to-primary/90 shadow-xl transform hover:-translate-y-1"
                 asChild>
-                <Link href={"/mcq"} >
+                <Link className="flex items-center" href={"/mcq"} >
                   <Play className="w-5 h-5 mr-2" />
                   Start Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
