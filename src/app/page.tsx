@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
 // Animated component wrapper
 type AnimatedDivProps = {
@@ -197,8 +198,10 @@ const JobCategories = () => {
                       size="sm"
                       className="text-primary hover:text-primary/80 group-hover:translate-x-1 transition-all duration-300"
                     >
-                      Start Practice
-                      <ChevronRight className="w-4 h-4 ml-1" />
+                      <Link href={"/mcq"} >
+                        Start Practice
+                        <ChevronRight className="w-4 h-4 ml-1" />
+                      </Link>
                     </Button>
                   </div>
                 </CardContent>
@@ -488,9 +491,11 @@ const JobPrepHomepage = () => {
                     size="lg"
                     className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 shadow-xl hover:shadow-primary/25 transform hover:-translate-y-1"
                   >
-                    <Play className="w-5 h-5 mr-2" />
-                    Start Free Practice
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                    <Link href={"/mcq"} >
+                      <Play className="w-5 h-5 mr-2" />
+                      Start Free Practice
+                      <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                    </Link>
                   </Button>
                   <Button
                     variant="outline"
@@ -588,10 +593,12 @@ const JobPrepHomepage = () => {
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-secondary to-primary hover:from-secondary/90 hover:to-primary/90 shadow-xl transform hover:-translate-y-1"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                Start Free Trial
-                <ArrowRight className="w-5 h-5 ml-2" />
+                asChild>
+                <Link href={"/mcq"} >
+                  <Play className="w-5 h-5 mr-2" />
+                  Start Free Trial
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
               </Button>
               <Button
                 variant="outline"
