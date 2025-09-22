@@ -157,8 +157,9 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                         <Button
                             onClick={handleStartTest}
                             disabled={loading}
-                            className="w-full py-6 text-lg font-semibold"
+                            className="w-full py-6 text-lg font-semibold cursor-pointer"
                             size="lg"
+
                         >
                             {loading ? (
                                 <>

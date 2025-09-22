@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { BookOpen, Lightbulb, Shield, Mail } from "lucide-react"
+import Link from "next/link"
 
 export function Footer() {
   return (
@@ -94,7 +95,7 @@ export function Footer() {
         <div className="border-t border-border mt-16 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-muted-foreground text-balance">
-              © 2025 JobPrep BD. All rights reserved. Empowering Bangladesh's future workforce.
+              © 2025 JobPrepAI. Built by <Link href={"https://rakibulhasan-dev.vercel.app"} className="underline hover:text-foreground">Rakibul Hasan</Link>
             </p>
             <div className="flex items-center space-x-8 text-muted-foreground">
               <div className="flex items-center space-x-2">
