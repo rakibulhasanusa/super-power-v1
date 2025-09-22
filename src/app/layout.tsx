@@ -3,6 +3,8 @@ import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
@@ -115,6 +117,8 @@ export default function RootLayout({
         <Header />
         <div className=" mt-20 container mx-auto px-4">
           {children}
+          <Analytics />
+          <SpeedInsights />
         </div>
         <Footer />
       </body>
