@@ -116,7 +116,8 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="topic">Topic (Optional)</Label>
-                                <Input className="border-foreground border-solid"
+                                <Input
+                                    className="border-foreground border-solid"
                                     id="topic"
                                     type="text"
                                     placeholder="e.g., Calculus, World War II"
@@ -159,7 +160,6 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                             disabled={loading}
                             className="w-full py-6 text-lg font-semibold cursor-pointer"
                             size="lg"
-
                         >
                             {loading ? (
                                 <>
