@@ -97,7 +97,7 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
                                 {timer.formatTime()}
                             </Badge>
 
-                            <Button onClick={() => setShowSubmitModal(true)}>Submit Test</Button>
+                            <Button className="cursor-pointer" onClick={() => setShowSubmitModal(true)}>Submit Test</Button>
                         </div>
                     </div>
                 </div>
@@ -120,7 +120,7 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
                                                 currentQuestion === index ? "default" : answers[mcqs[index].id] ? "secondary" : "outline"
                                             }
                                             size="sm"
-                                            className="w-10 h-10 p-0"
+                                            className="w-10 h-10 p-0 cursor-pointer"
                                         >
                                             {index + 1}
                                         </Button>
@@ -162,10 +162,11 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
                                             key={option.label}
                                             onClick={() => handleAnswerSelect(currentMCQ.id, option.label)}
                                             variant={answers[currentMCQ.id] === option.label ? "default" : "outline"}
-                                            className="w-full text-left p-4 h-auto justify-start"
+                                            className="w-full text-left p-4 h-auto justify-start cursor-pointer"
                                         >
                                             <span className="font-semibold mr-3">{option.label}.</span>
                                             <span>{option.text}</span>
+
                                         </Button>
                                     ))}
                                 </div>
@@ -175,6 +176,7 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
                                         onClick={() => navigateToQuestion(Math.max(0, currentQuestion - 1))}
                                         disabled={currentQuestion === 0}
                                         variant="ghost"
+                                        className="cursor-pointer"
                                     >
                                         <ChevronLeft className="mr-2 h-4 w-4" />
                                         Previous
@@ -184,6 +186,7 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
                                         onClick={() => navigateToQuestion(Math.min(mcqs.length - 1, currentQuestion + 1))}
                                         disabled={currentQuestion === mcqs.length - 1}
                                         variant="ghost"
+                                        className="cursor-pointer"
                                     >
                                         Next
                                         <ChevronRight className="ml-2 h-4 w-4" />
@@ -208,7 +211,7 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
                         <Button variant="outline" onClick={() => setShowSubmitModal(false)}>
                             Cancel
                         </Button>
-                        <Button onClick={handleSubmitTest}>Submit Test</Button>
+                        <Button className="cursor-pointer" onClick={handleSubmitTest}>Submit Test</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
