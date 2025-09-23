@@ -1,14 +1,16 @@
 "use client"
+
 import { useState, useEffect, useCallback } from "react"
 
-export const useTimer = (initialMinutes = 13) => {
-    const [timeLeft, setTimeLeft] = useState(initialMinutes * 60)
+export function useTimer(totalMinutes: number) {
+    const [timeLeft, setTimeLeft] = useState(totalMinutes * 60) // Convert to seconds
     const [isRunning, setIsRunning] = useState(false)
     const [hasEnded, setHasEnded] = useState(false)
+    const [startTime, setStartTime] = useState<number | null>(null)
 
     const startTimer = useCallback(() => {
         setIsRunning(true)
-        setHasEnded(false)
+        setStartTime(Date.now())
     }, [])
 
     const stopTimer = useCallback(() => {
@@ -16,35 +18,46 @@ export const useTimer = (initialMinutes = 13) => {
     }, [])
 
     const resetTimer = useCallback(() => {
-        setTimeLeft(initialMinutes * 60)
+        setTimeLeft(totalMinutes * 60)
         setIsRunning(false)
         setHasEnded(false)
-    }, [initialMinutes])
+        setStartTime(null)
+    }, [totalMinutes])
+
+    const formatTime = useCallback(() => {
+        const minutes = Math.floor(timeLeft / 60)
+        const seconds = timeLeft % 60
+        return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+    }, [timeLeft])
+
+    const getElapsedTime = useCallback(() => {
+        if (!startTime) return "00:00"
+        const elapsed = Math.floor((Date.now() - startTime) / 1000)
+        const minutes = Math.floor(elapsed / 60)
+        const seconds = elapsed % 60
+        return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+    }, [startTime])
 
     useEffect(() => {
-        let interval: NodeJS.Timeout
+        let interval: NodeJS.Timeout | null = null
 
         if (isRunning && timeLeft > 0) {
             interval = setInterval(() => {
-                setTimeLeft((prev) => {
-                    if (prev <= 1) {
-                        setIsRunning(false)
+                setTimeLeft((prevTime) => {
+                    if (prevTime <= 1) {
                         setHasEnded(true)
+                        setIsRunning(false)
                         return 0
                     }
-                    return prev - 1
+                    return prevTime - 1
                 })
             }, 1000)
         }
 
-        return () => clearInterval(interval)
+        return () => {
+            if (interval) clearInterval(interval)
+        }
     }, [isRunning, timeLeft])
-
-    const formatTime = useCallback((seconds: number) => {
-        const mins = Math.floor(seconds / 60)
-        const secs = seconds % 60
-        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
-    }, [])
 
     return {
         timeLeft,
@@ -53,7 +66,7 @@ export const useTimer = (initialMinutes = 13) => {
         startTimer,
         stopTimer,
         resetTimer,
-        formatTime: () => formatTime(timeLeft),
-        getElapsedTime: () => formatTime(initialMinutes * 60 - timeLeft),
+        formatTime,
+        getElapsedTime,
     }
 }

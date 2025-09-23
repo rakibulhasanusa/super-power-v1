@@ -1,6 +1,5 @@
 import { Redis } from "@upstash/redis"
 
-
 const redis = new Redis({
     url: process.env.KV_MAIN_REST_API_URL!,
     token: process.env.KV_MAIN_REST_API_TOKEN!,
@@ -13,9 +12,8 @@ export async function checkRateLimit(ip: string): Promise<{
     totalHits: number
 }> {
     const key = `rate_limit:${ip}`
-    const windowMs = 7 * 24 * 60 * 60 * 1000 // 7 days
-
-    const maxRequests = 2
+    const windowMs = 24 * 60 * 60 * 1000 // 24 hour window
+    const maxRequests = 4 // 4 requests per 24 hours
 
     // Get current count
     const current = (await redis.get<number>(key)) || 0
@@ -49,6 +47,8 @@ export async function checkRateLimit(ip: string): Promise<{
 export function getClientIP(request: Request): string {
     const forwarded = request.headers.get("x-forwarded-for")
     const realIP = request.headers.get("x-real-ip")
+
+    console.log({ request });
 
     if (forwarded) {
         return forwarded.split(",")[0].trim()
