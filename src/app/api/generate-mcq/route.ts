@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { generateObject } from "ai"
+import { openai } from "@ai-sdk/openai"
 import { z } from "zod"
 import { checkRateLimit, getClientIP, logRateLimit } from "@/lib/rate-limiter"
 
@@ -30,7 +31,7 @@ const requestSchema = z.object({
     subject: z.string().default("General"),
     topic: z.string().optional(),
     difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
-    language: z.enum(["english", "bengali"]).default("bengali"),
+    language: z.enum(["english", "bengali"]).default("english"),
     examType: z.string().optional(),
 })
 
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 {
                     success: false,
-                    error: `Rate limit exceeded. You can make 2 requests per minute. Please try again in ${retryAfter} seconds.`,
+                    error: `Rate limit exceeded. You can make 4 requests per minute. Please try again in ${retryAfter} seconds.`,
                     retryAfter,
                     resetTime: rateLimitResult.resetTime,
                 },
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
                     status: 429,
                     headers: {
                         "Retry-After": String(retryAfter),
-                        "X-RateLimit-Limit": "2",
+                        "X-RateLimit-Limit": "4",
                         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
                         "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
                     },
@@ -81,34 +82,26 @@ export async function POST(request: NextRequest) {
         const basePrompt = promptInBengali
             ? `ঠিক ${count}টি বহুনির্বাচনী প্রশ্ন তৈরি করুন ${subject} বিষয়ে${topic ? ` বিশেষভাবে ${topic} টপিকে` : ""} ${difficulty} অসুবিধার স্তরে।
 
-            গুরুত্বপূর্ণ শর্তাবলী:
-            - প্রতিটি প্রশ্নে ৪টি অপশন থাকবে যা একে অপরের খুব কাছাকাছি
-            - সব অপশনই যুক্তিযুক্ত হতে হবে - কোনো স্পষ্ট ভুল উত্তর নয়
-            - বিভ্রান্তিকর অপশনগুলো প্রকৃত বোঝাপড়া পরীক্ষা করবে
-            - প্রশ্নের নম্বর ১ থেকে ${count} পর্যন্ত
-            - স্পষ্ট ব্যাখ্যা দিন
-            - সময়বদ্ধ পরীক্ষার জন্য উপযুক্ত প্রশ্ন তৈরি করুন
-            ${examType ? `- ${examType} পরীক্ষার ধরনের জন্য উপযুক্ত করুন` : ""}
+        গুরুত্বপূর্ণ শর্তাবলী:
+        - প্রতিটি প্রশ্নে ৪টি অপশন থাকবে যা একে অপরের খুব কাছাকাছি
+        - সব অপশনই যুক্তিযুক্ত হতে হবে - কোনো স্পষ্ট ভুল উত্তর নয়
+        - বিভ্রান্তিকর অপশনগুলো প্রকৃত বোঝাপড়া পরীক্ষা করবে
+        - প্রশ্নের নম্বর ১ থেকে ${count} পর্যন্ত
+        - স্পষ্ট ব্যাখ্যা দিন
+        - সময়বদ্ধ পরীক্ষার জন্য উপযুক্ত প্রশ্ন তৈরি করুন
+        ${examType ? `- ${examType} পরীক্ষার ধরনের জন্য উপযুক্ত করুন` : ""}
 
-            উদাহরণ কাছাকাছি অপশন:
-            প্রশ্ন: "বাংলাদেশের স্বাধীনতা লাভের তারিখ কোনটি?"
-            A. ২৬ মার্চ, ১৯৭১  B. ১৬ ডিসেম্বর, ১৯৭১  C. ২৩ মার্চ, ১৯৭১  D. ২৫ মার্চ, ১৯৭১
-
-            সব প্রশ্ন ও উত্তর বাংলায় লিখুন।`
+        সব প্রশ্ন ও উত্তর বাংলায় লিখুন।`
             : `Generate exactly ${count} multiple choice questions about ${subject}${topic ? ` focusing on ${topic}` : ""} at ${difficulty} difficulty level.
 
-            CRITICAL REQUIREMENTS:
-            - Each question must have 4 options that are VERY CLOSE to each other
-            - All options should be plausible - no obviously wrong answers
-            - Distractors should test genuine understanding
-            - Number questions from 1 to ${count}
-            - Provide clear explanations
-            - Make questions suitable for a timed test environment
-            ${examType ? `- Make it suitable for ${examType} exam type` : ""}
-
-            EXAMPLE of close options:
-            Question: "What is the value of π to 4 decimal places?"
-            A. 3.1415  B. 3.1416  C. 3.1417  D. 3.1414`
+        CRITICAL REQUIREMENTS:
+        - Each question must have 4 options that are VERY CLOSE to each other
+        - All options should be plausible - no obviously wrong answers
+        - Distractors should test genuine understanding
+        - Number questions from 1 to ${count}
+        - Provide clear explanations
+        - Make questions suitable for a timed test environment
+        ${examType ? `- Make it suitable for ${examType} exam type` : ""}`
 
         const { object } = await generateObject({
             model: "gpt-4o",
@@ -151,7 +144,7 @@ export async function POST(request: NextRequest) {
             },
             {
                 headers: {
-                    "X-RateLimit-Limit": "2",
+                    "X-RateLimit-Limit": "4",
                     "X-RateLimit-Remaining": String(rateLimitResult.remaining),
                     "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
                 },
@@ -209,39 +202,79 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+    const startTime = Date.now()
     const clientIP = getClientIP(request)
+    const userAgent = request.headers.get("user-agent") || "unknown"
+    const endpoint = "/api/generate-mcq"
 
     // Check current rate limit status
-    const rateLimitResult = await checkRateLimit(clientIP)
 
-    return NextResponse.json(
-        {
-            message: "MCQ Generator API is running",
-            rateLimit: {
-                limit: 2,
-                remaining: rateLimitResult.remaining,
-                resetTime: rateLimitResult.resetTime,
-                windowMs: 60000,
-            },
-            endpoints: {
-                POST: "/api/generate-mcq",
-                description: "Generate multiple choice questions",
-                parameters: {
-                    count: "number (1-40, default: 10)",
-                    subject: "string (default: General)",
-                    topic: "string (optional)",
-                    difficulty: "easy|medium|hard (default: medium)",
-                    language: "english|bengali (default: bengali)",
-                    examType: "string (optional, e.g., BCS, University)",
+
+    try {
+        const rateLimitResult = await checkRateLimit(clientIP)
+
+        // Log the rate limit check
+        logRateLimit(clientIP, rateLimitResult.allowed, rateLimitResult.remaining)
+
+        if (!rateLimitResult.allowed) {
+            const retryAfter = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)
+
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: `Rate limit exceeded. You can make 4 requests per minute. Please try again in ${retryAfter} seconds.`,
+                    retryAfter,
+                    resetTime: rateLimitResult.resetTime,
+                },
+                {
+                    status: 429,
+                    headers: {
+                        "Retry-After": String(retryAfter),
+                        "X-RateLimit-Limit": "4",
+                        "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+                        "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
+                    },
+                },
+            )
+        }
+
+        return NextResponse.json(
+            {
+                message: "MCQ Generator API is running",
+                rateLimit: {
+                    limit: 4,
+                    remaining: rateLimitResult.remaining,
+                    resetTime: rateLimitResult.resetTime,
+                    windowMs: 60000,
+                },
+                endpoints: {
+                    POST: "/api/generate-mcq",
+                    description: "Generate multiple choice questions",
+                    parameters: {
+                        count: "number (1-40, default: 10)",
+                        subject: "string (default: General)",
+                        topic: "string (optional)",
+                        difficulty: "easy|medium|hard (default: medium)",
+                        language: "english|bengali (default: english)",
+                        examType: "string (optional, e.g., BCS, University)",
+                    },
                 },
             },
-        },
-        {
-            headers: {
-                "X-RateLimit-Limit": "2",
-                "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-                "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
+            {
+                headers: {
+                    "X-RateLimit-Limit": "4",
+                    "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+                    "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
+                },
             },
-        },
-    )
+        )
+    } catch (error) {
+        console.error("[RATE_LIMIT_CHECK_ERROR]", {
+            ip: clientIP,
+            userAgent: userAgent.slice(0, 100),
+            endpoint,
+            error: error instanceof Error ? error.message : "Unknown error",
+            timestamp: new Date().toISOString(),
+        })
+    }
 }
