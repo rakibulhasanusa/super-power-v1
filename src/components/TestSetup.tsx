@@ -6,12 +6,12 @@ import { z } from "zod"
 import type { MCQ, RateLimitError } from "@/types/mcq"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Clock, Loader2, Rocket, AlertTriangle } from "lucide-react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import QuestionLoading from "./question-loading"
+import { Textarea } from "./ui/textarea"
 
 interface TestSetupProps {
     onStartTest: (mcqs: MCQ[]) => void
@@ -22,7 +22,7 @@ const formSchema = z.object({
     subject: z.string().min(1, "Subject is required"),
     topic: z.string().optional(),
     difficulty: z.enum(["easy", "medium", "hard"]),
-    language: z.enum(["english", "bengali"]),
+    language: z.enum(["bengali", "english"]),
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -42,7 +42,7 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
             subject: "Mathematics",
             topic: "",
             difficulty: "medium",
-            language: "english",
+            language: "bengali",
         },
     })
 
@@ -149,6 +149,27 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                     <FormField
                                         control={form.control}
+                                        name="language"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Language</FormLabel>
+                                                <Select value={field.value} onValueChange={field.onChange}>
+                                                    <FormControl>
+                                                        <SelectTrigger className="border-foreground border-solid w-full">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value="bengali">Bengali</SelectItem>
+                                                        <SelectItem value="english">English</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
                                         name="count"
                                         render={({ field }) => (
                                             <FormItem>
@@ -158,7 +179,7 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                                                     onValueChange={(value) => field.onChange(Number.parseInt(value))}
                                                 >
                                                     <FormControl>
-                                                        <SelectTrigger className="border-foreground border-solid">
+                                                        <SelectTrigger className="border-foreground border-solid w-full">
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -177,6 +198,11 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                                         )}
                                     />
 
+
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+
                                     <FormField
                                         control={form.control}
                                         name="subject"
@@ -185,7 +211,7 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                                                 <FormLabel>Subject</FormLabel>
                                                 <Select value={field.value} onValueChange={field.onChange}>
                                                     <FormControl>
-                                                        <SelectTrigger className="border-foreground border-solid">
+                                                        <SelectTrigger className="border-foreground border-solid w-full">
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -201,26 +227,6 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                                             </FormItem>
                                         )}
                                     />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <FormField
-                                        control={form.control}
-                                        name="topic"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Topic (Optional)</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        className="border-foreground border-solid"
-                                                        placeholder="e.g., Calculus, World War II"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
 
                                     <FormField
                                         control={form.control}
@@ -230,7 +236,7 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                                                 <FormLabel>Difficulty Level</FormLabel>
                                                 <Select value={field.value} onValueChange={field.onChange}>
                                                     <FormControl>
-                                                        <SelectTrigger className="border-foreground border-solid">
+                                                        <SelectTrigger className="border-foreground border-solid w-full">
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -248,25 +254,23 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
 
                                 <FormField
                                     control={form.control}
-                                    name="language"
+                                    name="topic"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Language</FormLabel>
-                                            <Select value={field.value} onValueChange={field.onChange}>
-                                                <FormControl>
-                                                    <SelectTrigger className="border-foreground border-solid">
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="english">English</SelectItem>
-                                                    <SelectItem value="bengali">Bengali</SelectItem>
-                                                </SelectContent>
-                                            </Select>
+                                            <FormLabel>Topic (Optional)</FormLabel>
+                                            <FormControl>
+                                                <Textarea
+                                                    placeholder="e.g., Algebra, World War II, Organic Chemistry"
+                                                    className="border-foreground border-solid w-full"
+                                                    {...field}
+                                                />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
+
+
 
                                 {error && (
                                     <Alert variant="destructive">

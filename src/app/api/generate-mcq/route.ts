@@ -31,9 +31,18 @@ const requestSchema = z.object({
     subject: z.string().default("General"),
     topic: z.string().optional(),
     difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
-    language: z.enum(["english", "bengali"]).default("english"),
+    language: z.enum(["english", "bengali"]),
     examType: z.string().optional(),
-})
+});
+
+function corsHeaders() {
+    return {
+        "Access-Control-Allow-Origin": "https://localhost:3000,https://jobpreai.vercel.app",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+        "Access-Control-Max-Age": "86400",
+    }
+}
 
 export async function POST(request: NextRequest) {
     const startTime = Date.now()
@@ -60,6 +69,7 @@ export async function POST(request: NextRequest) {
                 {
                     status: 429,
                     headers: {
+                        ...corsHeaders(),
                         "Retry-After": String(retryAfter),
                         "X-RateLimit-Limit": "4",
                         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
@@ -116,7 +126,7 @@ export async function POST(request: NextRequest) {
 
         console.log("[MCQ_GENERATION_SUCCESS]", {
             ip: clientIP,
-            userAgent: userAgent.slice(0, 100),
+            userAgent: userAgent,
             count: object.mcqs.length,
             subject,
             topic,
@@ -144,6 +154,7 @@ export async function POST(request: NextRequest) {
             },
             {
                 headers: {
+                    ...corsHeaders(),
                     "X-RateLimit-Limit": "4",
                     "X-RateLimit-Remaining": String(rateLimitResult.remaining),
                     "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
@@ -229,6 +240,7 @@ export async function GET(request: NextRequest) {
                 {
                     status: 429,
                     headers: {
+                        ...corsHeaders(),
                         "Retry-After": String(retryAfter),
                         "X-RateLimit-Limit": "4",
                         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
