@@ -16,7 +16,7 @@ export function Footer() {
                 <BookOpen className="w-7 h-7 text-primary-foreground" />
               </div>
               <div>
-                <span className="text-2xl font-bold group-hover:text-primary transition-colors">JobPrep BD</span>
+                <span className="text-2xl font-bold group-hover:text-primary transition-colors">JobPreAI</span>
                 <div className="text-sm text-primary flex items-center gap-2">
                   AI-Powered Job Preparation
                   <Badge variant="outline" className="text-xs">
@@ -29,19 +29,6 @@ export function Footer() {
               Empowering Bangladeshi job seekers with comprehensive preparation for BCS, bank jobs, government
               positions, and university admissions through AI-powered learning.
             </p>
-
-            <Card className="max-w-md">
-              <CardContent className="p-4">
-                <h4 className="font-semibold mb-2 flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  Stay Updated
-                </h4>
-                <div className="flex gap-2">
-                  <Input placeholder="Enter your email" className="flex-1" />
-                  <Button size="sm">Subscribe</Button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
           <div>
@@ -95,7 +82,7 @@ export function Footer() {
         <div className="border-t border-border mt-16 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-muted-foreground text-balance">
-              © 2025 JobPrepAI. Built by <Link href={"https://rakibulhasan-dev.vercel.app"} className="underline hover:text-foreground">Rakibul Hasan</Link>
+              © 2025 JobPreAI. Built by <Link href={"https://rakibulhasan-dev.vercel.app"} className="underline hover:text-foreground">Rakibul Hasan</Link>
             </p>
             <div className="flex items-center space-x-8 text-muted-foreground">
               <div className="flex items-center space-x-2">
