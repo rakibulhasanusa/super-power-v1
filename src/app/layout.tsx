@@ -115,7 +115,7 @@ export default function RootLayout({
 
       >
         <Header />
-        <div className=" mt-20 container mx-auto px-4">
+        <div className=" mt-20 container mx-auto">
           {children}
           <Analytics />
           <SpeedInsights />
