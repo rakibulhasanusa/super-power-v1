@@ -34,13 +34,26 @@ const requestSchema = z.object({
     examType: z.string().optional(),
 });
 
-function corsHeaders() {
+function corsHeaders(origin?: string | null) {
+    const allowedOrigins = [
+        "http://localhost:3000",
+        "https://localhost:3000",
+        "https://jobpreai.vercel.app",
+    ]
+    const originHeader = origin || allowedOrigins[0]
+    const allowOrigin = allowedOrigins.includes(originHeader) ? originHeader : allowedOrigins[0]
+
     return {
-        "Access-Control-Allow-Origin": "https://localhost:3000,https://jobpreai.vercel.app",
+        "Access-Control-Allow-Origin": allowOrigin,
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
         "Access-Control-Max-Age": "86400",
     }
+}
+
+export async function OPTIONS(request: NextRequest) {
+    const origin = request.headers.get("origin")
+    return NextResponse.json({}, { headers: corsHeaders(origin) })
 }
 
 export async function POST(request: NextRequest) {
@@ -136,6 +149,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
         })
 
+        const origin = request.headers.get("origin")
         return NextResponse.json(
             {
                 success: true,
@@ -153,7 +167,7 @@ export async function POST(request: NextRequest) {
             },
             {
                 headers: {
-
+                    ...corsHeaders(origin),
                     "X-RateLimit-Limit": "4",
                     // "X-RateLimit-Remaining": String(rateLimitResult.remaining),
                     // "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
@@ -172,6 +186,9 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
         })
 
+        const origin = request.headers.get("origin")
+        const corsHeadersObj = corsHeaders(origin)
+
         // Handle Zod validation errors specifically
         if (error instanceof z.ZodError) {
             return NextResponse.json(
@@ -180,7 +197,7 @@ export async function POST(request: NextRequest) {
                     error: "Invalid request data",
                     details: error.issues,
                 },
-                { status: 400 },
+                { status: 400, headers: corsHeadersObj },
             )
         }
 
@@ -196,7 +213,7 @@ export async function POST(request: NextRequest) {
                     success: false,
                     error: "External API rate limit exceeded. Please try again later.",
                 },
-                { status: 429 },
+                { status: 429, headers: corsHeadersObj },
             )
         }
 
@@ -206,7 +223,7 @@ export async function POST(request: NextRequest) {
                 error: "Failed to generate MCQs. Please try again.",
                 timestamp: new Date().toISOString(),
             },
-            { status: 500 },
+            { status: 500, headers: corsHeadersObj },
         )
     }
 }
@@ -229,6 +246,7 @@ export async function GET(request: NextRequest) {
         if (!rateLimitResult.allowed) {
             const retryAfter = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)
 
+            const origin = request.headers.get("origin")
             return NextResponse.json(
                 {
                     success: false,
@@ -239,7 +257,7 @@ export async function GET(request: NextRequest) {
                 {
                     status: 429,
                     headers: {
-                        ...corsHeaders(),
+                        ...corsHeaders(origin),
                         "Retry-After": String(retryAfter),
                         "X-RateLimit-Limit": "4",
                         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
@@ -249,6 +267,7 @@ export async function GET(request: NextRequest) {
             )
         }
 
+        const origin = request.headers.get("origin")
         return NextResponse.json(
             {
                 message: "MCQ Generator API is running",
@@ -273,6 +292,7 @@ export async function GET(request: NextRequest) {
             },
             {
                 headers: {
+                    ...corsHeaders(origin),
                     "X-RateLimit-Limit": "4",
                     "X-RateLimit-Remaining": String(rateLimitResult.remaining),
                     "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
@@ -287,5 +307,14 @@ export async function GET(request: NextRequest) {
             error: error instanceof Error ? error.message : "Unknown error",
             timestamp: new Date().toISOString(),
         })
+
+        const origin = request.headers.get("origin")
+        return NextResponse.json(
+            {
+                success: false,
+                error: "Failed to check rate limit",
+            },
+            { status: 500, headers: corsHeaders(origin) },
+        )
     }
 }
