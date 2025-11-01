@@ -2,7 +2,7 @@
 
 An AI-powered multiple-choice question practice platform targeting Bangladesh job preparation (BCS, Bank, Govt, and University). Users can configure a timed test, generate high‑quality MCQs in Bengali or English, take the test with a clean UI, and review detailed results and explanations.
 
-Live demo: ("https://jobpreai.vercel.app")["https://jobpreai.vercel.app"]
+Live demo: https://jobpreai.vercel.app
 
 
 ### Key Features
@@ -25,7 +25,7 @@ Live demo: ("https://jobpreai.vercel.app")["https://jobpreai.vercel.app"]
 
 ## Project Structure
 
-```text
+````bash
 src/
   app/
     page.tsx                 # Marketing homepage
@@ -40,7 +40,7 @@ src/
   hooks/useTimer.ts          # 1-minute-per-question timer
   lib/rate-limiter.ts        # Upstash Redis rate limit helpers
   types/mcq.ts               # Strong types for MCQ and results
-```
+````
 
 ---
 

@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { generateObject } from "ai"
-import { openai } from "@ai-sdk/openai"
 import { z } from "zod"
 import { checkRateLimit, getClientIP, logRateLimit } from "@/lib/rate-limiter"
 
@@ -51,33 +50,33 @@ export async function POST(request: NextRequest) {
     const endpoint = "/api/generate-mcq"
 
     try {
-        const rateLimitResult = await checkRateLimit(clientIP)
+        // const rateLimitResult = await checkRateLimit(clientIP)
 
         // Log the rate limit check
-        logRateLimit(clientIP, rateLimitResult.allowed, rateLimitResult.remaining)
+        // logRateLimit(clientIP, rateLimitResult.allowed, rateLimitResult.remaining)
 
-        if (!rateLimitResult.allowed) {
-            const retryAfter = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)
+        // if (!rateLimitResult.allowed) {
+        //     const retryAfter = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)
 
-            return NextResponse.json(
-                {
-                    success: false,
-                    error: `Rate limit exceeded. You can make 4 requests per minute. Please try again in ${retryAfter} seconds.`,
-                    retryAfter,
-                    resetTime: rateLimitResult.resetTime,
-                },
-                {
-                    status: 429,
-                    headers: {
-                        ...corsHeaders(),
-                        "Retry-After": String(retryAfter),
-                        "X-RateLimit-Limit": "4",
-                        "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-                        "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
-                    },
-                },
-            )
-        }
+        //     return NextResponse.json(
+        //         {
+        //             success: false,
+        //             error: `Rate limit exceeded. You can make 4 requests per minute. Please try again in ${retryAfter} seconds.`,
+        //             retryAfter,
+        //             resetTime: rateLimitResult.resetTime,
+        //         },
+        //         {
+        //             status: 429,
+        //             headers: {
+
+        //                 "Retry-After": String(retryAfter),
+        //                 "X-RateLimit-Limit": "4",
+        //                 "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+        //                 "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
+        //             },
+        //         },
+        //     )
+        // }
 
         // Parse and validate request body
         const body = await request.json()
@@ -133,7 +132,7 @@ export async function POST(request: NextRequest) {
             difficulty,
             language,
             processingTimeMs: processingTime,
-            rateLimitRemaining: rateLimitResult.remaining,
+            // rateLimitRemaining: rateLimitResult.remaining,
             timestamp: new Date().toISOString(),
         })
 
@@ -154,15 +153,15 @@ export async function POST(request: NextRequest) {
             },
             {
                 headers: {
-                    ...corsHeaders(),
+
                     "X-RateLimit-Limit": "4",
-                    "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-                    "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
+                    // "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+                    // "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetTime / 1000)),
                 },
             },
         )
     } catch (error) {
-        const processingTime = Date.now() - startTime
+        const processingTime = Date.now() - startTime;
 
         console.error("[MCQ_GENERATION_ERROR]", {
             ip: clientIP,
