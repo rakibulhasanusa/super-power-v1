@@ -13,6 +13,8 @@ export default function DashboardPage() {
     const router = useRouter()
     const { user, isLoading, error, clearCache } = useUser();
 
+    console.log({ user })
+
     const handleLogout = async () => {
         try {
             const response = await fetch("/api/logout", {

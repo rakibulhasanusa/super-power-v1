@@ -5,6 +5,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { UserProvider } from "@/context/user-context";
 
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
@@ -116,7 +117,7 @@ export default function RootLayout({
       >
         <Header />
         <div className=" mt-20 container mx-auto">
-          {children}
+          <UserProvider>{children}</UserProvider>
           <Analytics />
           <SpeedInsights />
         </div>

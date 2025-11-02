@@ -8,15 +8,19 @@ export const maxDuration = 10
 
 export async function GET(request: NextRequest) {
     try {
-        const token = request.cookies.get("session")?.value
+        let token = request.headers.get("Authorization")?.slice(7) // Bearer token
 
         if (!token) {
-            return NextResponse.json({ error: "No session" }, { status: 401 })
+            token = request.cookies.get("session")?.value
+        }
+
+        if (!token) {
+            return NextResponse.json({ error: "No session or authorization header provided" }, { status: 401 })
         }
 
         const payload = await verifySession(token)
         if (!payload) {
-            return NextResponse.json({ error: "Invalid session" }, { status: 401 })
+            return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 })
         }
 
         const user = await db.select().from(users).where(eq(users.id, payload.userId)).limit(1).then((res) => res[0])
@@ -39,11 +43,11 @@ export async function GET(request: NextRequest) {
         )
 
         response.headers.set("Cache-Control", "private, no-store")
+        response.headers.set("X-Token-Valid", "true")
 
         return response
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error"
-        console.error("Get user error:", errorMessage)
         return NextResponse.json({ error: "Failed to fetch user" }, { status: 500 })
     }
 }

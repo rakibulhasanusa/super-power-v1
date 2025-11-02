@@ -5,19 +5,16 @@ const PUBLIC_PATHS = ["/", "/login", "/register"]
 const PROTECTED_ROUTES = ["/dashboard/:path*", "/mcq"]
 const PROTECTED_API_ROUTES = ["/api/generate-mcq", "/api/me", "/api/logout"]
 
-const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET || "your-secret-key-change-in-production")
+const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET || " ")
 
 export async function proxy(request: NextRequest) {
     const pathname = request.nextUrl.pathname
-    console.log("Proxy check for path:", pathname)
 
-    // Allow public paths and skip API auth endpoints
     if (PUBLIC_PATHS.includes(pathname)) {
         console.log("Path is public, allowing access")
         return NextResponse.next()
     }
 
-    // Check if the route is protected
     const isProtectedRoute = PROTECTED_ROUTES.some((route) => pathname.startsWith(route))
     const isProtectedApiRoute = PROTECTED_API_ROUTES.some((route) => pathname.startsWith(route))
 
@@ -27,7 +24,6 @@ export async function proxy(request: NextRequest) {
 
     // Get token from cookies
     const token = request.cookies.get("session")?.value
-    console.log("[v0] Checking token for protected route:", pathname, "Token exists:", !!token)
 
     if (!token) {
         if (isProtectedApiRoute) {
