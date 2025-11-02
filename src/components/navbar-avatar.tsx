@@ -1,4 +1,5 @@
 "use client";
+
 import { UserIcon, SettingsIcon, BellIcon, LogOutIcon, CreditCardIcon, LogInIcon, Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -16,16 +17,6 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/hooks/use-user';
 import Link from 'next/link';
 
-const listItems = [
-    {
-        icon: UserIcon,
-        property: 'Profile'
-    },
-    {
-        icon: LogOutIcon,
-        property: 'Sign Out'
-    }
-]
 
 const NavbarAvatar = () => {
     const router = useRouter()
@@ -51,16 +42,7 @@ const NavbarAvatar = () => {
         }
     }
 
-    if (isLoading) {
-        return (
-            <main className="min-h-screen bg-background flex items-center justify-center">
-                <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-                    <p className="text-muted-foreground">Loading...</p>
-                </div>
-            </main>
-        )
-    }
+    console.log({ user })
     return (
         <>
             {user ? (

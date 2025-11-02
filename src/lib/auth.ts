@@ -4,7 +4,7 @@ import bcryptjs from "bcryptjs"
 import { eq } from "drizzle-orm"
 import { db } from "@/lib/db"
 
-const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET || "your-secret-key-change-in-production")
+const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET || "")
 
 export async function hashPassword(password: string): Promise<string> {
     if (!password || password.length < 6) {
@@ -22,7 +22,7 @@ export async function createSession(userId: string): Promise<string> {
         throw new Error("User ID is required for session creation")
     }
 
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
     const token = await new jose
         .SignJWT({ userId, sessionId: crypto.randomUUID() })
@@ -36,10 +36,27 @@ export async function createSession(userId: string): Promise<string> {
 
 export async function verifySession(token: string) {
     try {
+        if (!token || typeof token !== "string") {
+            console.error(" Invalid token format")
+            return null
+        }
+
         const verified = await jose.jwtVerify(token, SECRET)
-        return verified.payload as { userId: string; sessionId: string }
+        const payload = verified.payload as { userId: string; sessionId: string }
+
+        if (!payload.userId || !payload.sessionId) {
+            console.error(" Invalid token payload - missing required fields")
+            return null
+        }
+
+        console.log(" Token verified successfully for user:", payload.userId)
+        return payload
     } catch (err) {
-        console.error("[v0] Session verification failed:", err)
+        if (err instanceof jose.errors.JWTExpired) {
+        } else if (err instanceof jose.errors.JWTInvalid) {
+        } else {
+            console.error("Session verification failed:", err instanceof Error ? err.message : err)
+        }
         return null
     }
 }
