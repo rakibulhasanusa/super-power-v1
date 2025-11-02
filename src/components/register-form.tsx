@@ -96,7 +96,7 @@ export function RegisterForm() {
                         <Input
                             id="name"
                             type="text"
-                            placeholder="John Doe"
+                            placeholder="Name"
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             required
@@ -122,7 +122,7 @@ export function RegisterForm() {
                         <Input
                             id="password"
                             type="password"
-                            placeholder="••••••••"
+                            placeholder="password"
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             required

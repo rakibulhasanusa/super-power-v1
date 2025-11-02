@@ -3,7 +3,7 @@ import * as jose from "jose"
 
 const PUBLIC_PATHS = ["/", "/login", "/register"]
 const PROTECTED_ROUTES = ["/dashboard/:path*", "/mcq"]
-const PROTECTED_API_ROUTES = ["/api/:path*"]
+const PROTECTED_API_ROUTES = ["/api/generate-mcq", "/api/me", "/api/logout"]
 
 const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET || "your-secret-key-change-in-production")
 
