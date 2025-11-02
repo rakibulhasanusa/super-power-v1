@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, BookOpen, Menu } from "lucide-react"
 import Link from "next/link"
+import NavbarAvatar from "./navbar-avatar"
 
 export function Header() {
   return (
@@ -35,14 +36,7 @@ export function Header() {
                 About
               </Link>
             </nav>
-            <Button
-              className="bg-gradient-to-r from-primary to-secondary text-primary-foreground px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-all duration-300 shadow-lg hover:scale-105 hover:-translate-y-1"
-              asChild
-            >
-              <Link prefetch={false} href="/mcq">
-                Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <NavbarAvatar />
           </div>
 
           <div className="md:hidden">
