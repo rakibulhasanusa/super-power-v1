@@ -95,7 +95,7 @@ export function LoginForm() {
                         <Input
                             id="password"
                             type="password"
-                            placeholder="••••••••"
+                            placeholder="password"
                             value={credentials.password}
                             onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                             required
