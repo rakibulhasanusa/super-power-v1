@@ -67,7 +67,8 @@ export function RegisterForm() {
             }
 
             toast.success("Registration successful! Redirecting...")
-            router.push("/login")
+            router.refresh();
+            router.push("/dashboard");
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : "An error occurred"
             setError(errorMsg)

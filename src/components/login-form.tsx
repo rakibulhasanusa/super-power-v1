@@ -11,9 +11,11 @@ import { toast } from "sonner"
 import Link from "next/link"
 import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useUser } from "@/context/user-context"
 
 export function LoginForm() {
     const router = useRouter()
+    const { refetch } = useUser()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [credentials, setCredentials] = useState({ email: "", password: "" })
@@ -52,6 +54,8 @@ export function LoginForm() {
             }
 
             toast.success("Login successful! Redirecting...")
+            router.refresh()
+            await refetch()
             router.push("/dashboard")
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : "An error occurred"

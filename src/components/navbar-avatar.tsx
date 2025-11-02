@@ -14,14 +14,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/hooks/use-user';
 import Link from 'next/link';
+import { useUser } from '@/context/user-context';
 
 
 const NavbarAvatar = () => {
     const router = useRouter()
-    const { user, isLoading, error, clearCache } = useUser();
-
+    const { user, isLoading, error, clearCache, refetch } = useUser();
     const handleLogout = async () => {
         try {
             const response = await fetch("/api/logout", {
@@ -32,8 +31,8 @@ const NavbarAvatar = () => {
             if (!response.ok) {
                 throw new Error("Logout failed")
             }
-
             clearCache()
+            router.refresh()
             toast.success("Logged out successfully")
             router.push("/login")
         } catch (error) {
@@ -42,10 +41,17 @@ const NavbarAvatar = () => {
         }
     }
 
-    console.log({ user })
+    if (isLoading) {
+        return (
+            <Button variant='secondary' size='icon' className='overflow-hidden rounded-full' disabled>
+                <Loader2 className="h-4 w-4 animate-spin" />
+            </Button>
+        )
+    }
+
     return (
         <>
-            {user ? (
+            {user?.email ? (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant='secondary' size='icon' className='overflow-hidden rounded-full'>

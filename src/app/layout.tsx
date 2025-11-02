@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { UserProvider } from "@/context/user-context";
+import { cookies } from "next/headers";
 
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
@@ -104,24 +105,28 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const session = cookieStore.get('session')?.value || null;
   return (
     <html lang="en" className="hydrated">
       <body
         className={`${ubuntu.variable} antialiased`}
 
       >
-        <Header />
-        <div className=" mt-20 container mx-auto">
-          <UserProvider>{children}</UserProvider>
-          <Analytics />
-          <SpeedInsights />
-        </div>
-        <Footer />
+        <UserProvider session={session}>
+          <Header />
+          <div className=" mt-20 container mx-auto">
+            {children}
+            <Analytics />
+            <SpeedInsights />
+          </div>
+          <Footer />
+        </UserProvider>
       </body>
     </html>
   );
