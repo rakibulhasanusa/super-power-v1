@@ -1,16 +1,27 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { MCQ, TestResult } from "@/types/mcq"
 import TestSetup from "@/components/TestSetup"
 import TestInterface from "@/components/TestInterface"
 import TestResults from "@/components/TestResults"
+import { useRouter } from "next/navigation"
+import { useUser } from "@/hooks/use-user"
 
 type AppState = "setup" | "testing" | "results"
 
 export default function MCQPage() {
     const [appState, setAppState] = useState<AppState>("setup")
     const [mcqs, setMCQs] = useState<MCQ[]>([])
-    const [testResult, setTestResult] = useState<TestResult | null>(null)
+    const [testResult, setTestResult] = useState<TestResult | null>(null);
+    const router = useRouter()
+
+    const { user, isLoading, error, clearCache } = useUser()
+
+    // useEffect(() => {
+    //     if (!isLoading && (error || !user)) {
+    //         router.push("/login")
+    //     }
+    // }, [isLoading, error, user, router])
 
     const handleStartTest = (generatedMCQs: MCQ[]) => {
         setMCQs(generatedMCQs)

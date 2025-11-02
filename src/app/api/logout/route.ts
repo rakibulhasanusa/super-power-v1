@@ -2,8 +2,6 @@ import { type NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
     try {
-        console.log("[v0] Logout attempt")
-
         const response = NextResponse.json({ message: "Logged out successfully" }, { status: 200 })
 
         response.cookies.set("session", "", {

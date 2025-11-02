@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,13 +11,7 @@ import { useUser } from "@/hooks/use-user"
 
 export default function DashboardPage() {
     const router = useRouter()
-    const { user, isLoading, error, clearCache } = useUser()
-
-    useEffect(() => {
-        if (!isLoading && (error || !user)) {
-            router.push("/login")
-        }
-    }, [isLoading, error, user, router])
+    const { user, isLoading, error, clearCache } = useUser();
 
     const handleLogout = async () => {
         try {
