@@ -10,11 +10,13 @@ import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import Link from "next/link"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useUser } from "@/context/user-context"
 
 export function RegisterForm() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const { refetch } = useUser();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -68,6 +70,7 @@ export function RegisterForm() {
 
             toast.success("Registration successful! Redirecting...")
             router.refresh();
+            await refetch();
             router.push("/dashboard");
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : "An error occurred"
