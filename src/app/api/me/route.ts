@@ -8,7 +8,7 @@ export const maxDuration = 10
 
 export async function GET(request: NextRequest) {
     try {
-        let token = request.headers.get("Authorization")?.slice(7) // Bearer token
+        let token = request.headers.get("Authorization")?.slice(7);
 
         if (!token) {
             token = request.cookies.get("session")?.value
