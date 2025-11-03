@@ -1,6 +1,6 @@
 "use client"
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import type { MCQ, TestResult } from "@/types/mcq"
 import { useTimer } from "@/hooks/useTimer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,10 +26,13 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [answers, setAnswers] = useState<Record<number, string>>({})
     const [showSubmitModal, setShowSubmitModal] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const testIdRef = useRef<string>("")
     const timer = useTimer(mcqs.length) // 1 minute per question
 
     useEffect(() => {
         timer.startTimer()
+        testIdRef.current = crypto.randomUUID()
     }, [])
 
     useEffect(() => {
@@ -42,7 +45,9 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
         setAnswers((prev) => ({ ...prev, [questionId]: answer }))
     }
 
-    const handleSubmitTest = () => {
+    const handleSubmitTest = async () => {
+        if (isSubmitting) return
+        setIsSubmitting(true)
         timer.stopTimer()
 
         const correctAnswers = mcqs.filter((mcq) => answers[mcq.id] === mcq.correctAnswer).length
@@ -61,7 +66,21 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ mcqs, onTestComplete, onB
             mcqs,
         }
 
-        onTestComplete(result)
+        try {
+            await fetch("/api/save-test-result", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    testId: testIdRef.current,
+                    ...result,
+                }),
+            })
+        } catch (e) {
+            // ignore network error for UX; still show results
+        } finally {
+            onTestComplete(result)
+        }
     }
 
     const getAnsweredCount = () => Object.keys(answers).length

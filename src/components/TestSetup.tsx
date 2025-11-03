@@ -47,9 +47,14 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
     })
 
     const subjects = [
+
         "Mathematics",
+        "Bangla",
         "Physics",
         "Chemistry",
+        "Information Technology",
+        "Islamic Studies",
+        "Religious Studies",
         "Biology",
         "History",
         "Geography",
@@ -59,6 +64,22 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
         "Economics",
         "Psychology",
         "Philosophy",
+        "Sociology",
+        "Political Science",
+        "Business Studies",
+        "Environmental Science",
+        "Art",
+        "Music",
+        "Physical Education",
+        "Statistics",
+        "Civics",
+        "Astronomy",
+        "Anthropology",
+        "Linguistics",
+        "Engineering",
+        "Medicine",
+        "Law",
+        "Ethics",
     ]
 
     const handleStartTest = async (data: FormData) => {
