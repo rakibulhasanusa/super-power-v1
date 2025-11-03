@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
         return response
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error"
-        console.error(" Logout error:", errorMessage)
         return NextResponse.json({ error: "Logout failed" }, { status: 500 })
     }
 }

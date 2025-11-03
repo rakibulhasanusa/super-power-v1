@@ -37,7 +37,6 @@ export async function createSession(userId: string): Promise<string> {
 export async function verifySession(token: string) {
     try {
         if (!token || typeof token !== "string") {
-            console.error(" Invalid token format")
             return null
         }
 
@@ -45,17 +44,14 @@ export async function verifySession(token: string) {
         const payload = verified.payload as { userId: string; sessionId: string }
 
         if (!payload.userId || !payload.sessionId) {
-            console.error(" Invalid token payload - missing required fields")
             return null
         }
 
-        console.log(" Token verified successfully for user:", payload.userId)
         return payload
     } catch (err) {
         if (err instanceof jose.errors.JWTExpired) {
         } else if (err instanceof jose.errors.JWTInvalid) {
         } else {
-            console.error("Session verification failed:", err instanceof Error ? err.message : err)
         }
         return null
     }
