@@ -19,6 +19,8 @@ Live demo: https://jobpreai.vercel.app
 - Tailwind CSS 4, Radix UI, shadcn‑ui components
 - AI SDK (`ai`, `@ai-sdk/openai`) with OpenAI models
 - Upstash Redis for rate limiting
+- Drizzle ORM + Neon Postgres (serverless) for persistence
+- JWT session auth (signed with `AUTH_SECRET`)
 - Vercel Analytics and Speed Insights
 
 ---
@@ -31,6 +33,7 @@ src/
     page.tsx                 # Marketing homepage
     mcq/page.tsx             # MCQ app container (setup → test → results)
     api/generate-mcq/route.ts# API: generates MCQs via OpenAI, with rate limit
+    api/save-test-result/route.ts # API: persists summarized test results
     globals.css, layout.tsx  # App shell and styles
   components/
     TestSetup.tsx            # Config form and API call
@@ -39,6 +42,9 @@ src/
     ui/*                     # Reusable UI primitives
   hooks/useTimer.ts          # 1-minute-per-question timer
   lib/rate-limiter.ts        # Upstash Redis rate limit helpers
+  lib/auth.ts                # JWT session helpers (create/verify)
+  lib/db/index.ts            # Drizzle + Neon Postgres client
+  lib/db/schema.ts           # Drizzle schema for users/sessions/test_results
   types/mcq.ts               # Strong types for MCQ and results
 ````
 
@@ -61,6 +67,11 @@ OPENAI_API_KEY=your_openai_api_key
 # Upstash Redis (used for API rate limiting)
 KV_MAIN_REST_API_URL=your_upstash_redis_rest_url
 KV_MAIN_REST_API_TOKEN=your_upstash_redis_rest_token
+# Database (Neon Postgres via Drizzle)
+DATABASE_URL=postgres://user:password@host/db
+
+# Auth
+AUTH_SECRET=your_long_random_secret
 ```
 
 ### Install and Run
@@ -87,6 +98,8 @@ Open http://localhost:3000
 ---
 
 ## API
+
+### Generate MCQs
 
 Endpoint: `POST /api/generate-mcq`
 
@@ -135,11 +148,50 @@ Rate limiting: 4 requests per 24 hours per IP (configurable in `src/lib/rate-lim
 
 ---
 
+### Save Test Result
+
+Endpoint: `POST /api/save-test-result`
+
+Auth: Requires a valid session via cookie `session` or `Authorization: Bearer <token>` (JWT signed with `AUTH_SECRET`).
+
+Request body (JSON):
+
+```json
+{
+  "testId": "optional-client-generated-id",
+  "totalQuestions": 10,
+  "correctAnswers": 7,
+  "wrongAnswers": 2,
+  "unanswered": 1,
+  "score": 7,
+  "percentage": 70,
+  "timeTaken": "08:15"
+}
+```
+
+Notes:
+- `timeTaken` accepts "MM:SS", "H:MM:SS", or number of seconds; it is normalized to seconds server‑side.
+- `userId` is taken from the verified session token.
+
+Response (201):
+
+```json
+{
+  "success": true,
+  "id": "result_id",
+  "createdAt": "ISO"
+}
+```
+
+---
+
 ## Implementation Notes
 - Strong runtime validation via Zod on both request and generated MCQ schema.
 - Language‑aware prompts for high‑quality Bengali/English outputs.
 - Clean UI with shadcn‑ui and Radix; responsive and accessible components.
 - Timer and state machine manage transitions between setup → testing → results.
+- Drizzle ORM models for `users`, `sessions`, and `test_results`; Neon serverless Postgres.
+- JWT session tokens (7d) created and verified in `src/lib/auth.ts`.
 
 ---
 
@@ -153,6 +205,8 @@ One‑click: Vercel recommended.
    - `OPENAI_API_KEY`
    - `KV_MAIN_REST_API_URL`
    - `KV_MAIN_REST_API_TOKEN`
+   - `DATABASE_URL`
+   - `AUTH_SECRET`
 4. Deploy
 
 Build/run scripts:
