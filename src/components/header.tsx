@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, BookOpen, Menu } from "lucide-react"
+import { BookOpen, Menu } from "lucide-react"
 import Link from "next/link"
 import NavbarAvatar from "./navbar-avatar"
 
@@ -14,13 +14,15 @@ export function Header() {
               <BookOpen className="w-7 h-7 text-primary-foreground" />
             </div>
             <div>
-              <span className="text-2xl font-bold text-foreground">JobPreAI</span>
-              <div className="text-xs text-muted-foreground flex items-center gap-1">
-                AI-Powered Learning
-                <Badge variant="secondary" className="text-xs px-2 py-0">
-                  Beta
-                </Badge>
-              </div>
+              <Link href={'/'}>
+                <span className="text-2xl font-bold text-foreground">JobPreAI</span>
+                <div className="text-xs text-muted-foreground flex items-center gap-1">
+                  AI-Powered Learning
+                  <Badge variant="secondary" className="text-xs px-2 py-0">
+                    Beta
+                  </Badge>
+                </div>
+              </Link>
             </div>
           </div>
 
@@ -29,7 +31,7 @@ export function Header() {
               <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
                 Features
               </Link>
-              <Link href="#categories" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/categories" className="text-muted-foreground hover:text-foreground transition-colors">
                 Categories
               </Link>
               <Link href="#about" className="text-muted-foreground hover:text-foreground transition-colors">

@@ -136,18 +136,18 @@ export async function POST(request: NextRequest) {
 
         const processingTime = Date.now() - startTime
 
-        console.log("[MCQ_GENERATION_SUCCESS]", {
-            ip: clientIP,
-            userAgent: userAgent,
-            count: object.mcqs.length,
-            subject,
-            topic,
-            difficulty,
-            language,
-            processingTimeMs: processingTime,
-            // rateLimitRemaining: rateLimitResult.remaining,
-            timestamp: new Date().toISOString(),
-        })
+        // console.log("[MCQ_GENERATION_SUCCESS]", {
+        //     ip: clientIP,
+        //     userAgent: userAgent,
+        //     count: object.mcqs.length,
+        //     subject,
+        //     topic,
+        //     difficulty,
+        //     language,
+        //     processingTimeMs: processingTime,
+        //     // rateLimitRemaining: rateLimitResult.remaining,
+        //     timestamp: new Date().toISOString(),
+        // })
 
         const origin = request.headers.get("origin")
         return NextResponse.json(
@@ -176,16 +176,6 @@ export async function POST(request: NextRequest) {
         )
     } catch (error) {
         const processingTime = Date.now() - startTime;
-
-        console.error("[MCQ_GENERATION_ERROR]", {
-            ip: clientIP,
-            userAgent: userAgent.slice(0, 100),
-            endpoint,
-            error: error instanceof Error ? error.message : "Unknown error",
-            processingTimeMs: processingTime,
-            timestamp: new Date().toISOString(),
-        })
-
         const origin = request.headers.get("origin")
         const corsHeadersObj = corsHeaders(origin)
 
@@ -216,7 +206,6 @@ export async function POST(request: NextRequest) {
                 { status: 429, headers: corsHeadersObj },
             )
         }
-
         return NextResponse.json(
             {
                 success: false,
@@ -233,10 +222,6 @@ export async function GET(request: NextRequest) {
     const clientIP = getClientIP(request)
     const userAgent = request.headers.get("user-agent") || "unknown"
     const endpoint = "/api/generate-mcq"
-
-    // Check current rate limit status
-
-
     try {
         const rateLimitResult = await checkRateLimit(clientIP)
 
