@@ -16,13 +16,15 @@ export function Footer() {
                 <BookOpen className="w-7 h-7 text-primary-foreground" />
               </div>
               <div>
-                <span className="text-2xl font-bold group-hover:text-primary transition-colors">JobPreAI</span>
-                <div className="text-sm text-primary flex items-center gap-2">
-                  AI-Powered Job Preparation
-                  <Badge variant="outline" className="text-xs">
-                    Bangladesh
-                  </Badge>
-                </div>
+                <Link href={'/'}>
+                  <span className="text-2xl font-bold text-foreground">JobPreAI</span>
+                  <div className="text-xs text-muted-foreground flex items-center gap-1">
+                    AI-Powered Learning
+                    <Badge variant="secondary" className="text-xs px-2 py-0">
+                      Beta
+                    </Badge>
+                  </div>
+                </Link>
               </div>
             </div>
             <p className="text-muted-foreground mb-8 max-w-md leading-relaxed text-pretty">
