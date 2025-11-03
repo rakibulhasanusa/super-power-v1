@@ -54,9 +54,8 @@ export function LoginForm() {
             }
 
             toast.success("Login successful! Redirecting...")
-            router.refresh()
-            await refetch()
-            router.push("/dashboard")
+            router.refresh();
+            await refetch();
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : "An error occurred"
             setError(errorMsg)
