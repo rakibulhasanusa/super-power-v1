@@ -1,4 +1,4 @@
-## JobPrep BD — AI MCQ Generator & Test Platform
+ ## JobPrep BD — AI MCQ Generator & Test Platform
 
 An AI-powered multiple-choice question practice platform targeting Bangladesh job preparation (BCS, Bank, Govt, and University). Users can configure a timed test, generate high‑quality MCQs in Bengali or English, take the test with a clean UI, and review detailed results and explanations.
 
