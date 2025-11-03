@@ -2,40 +2,8 @@ import { type NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { testResults } from "@/lib/db/schema"
 import { verifySession } from "@/lib/auth"
-import { z } from "zod"
 
 export const maxDuration = 20
-
-const answerSchema = z.record(z.string().regex(/^\d+$/), z.string())
-
-const mcqOptionSchema = z.object({
-    label: z.enum(["A", "B", "C", "D"]),
-    text: z.string(),
-})
-
-const mcqSchema = z.object({
-    id: z.number(),
-    subject: z.string(),
-    topic: z.string(),
-    difficulty: z.enum(["easy", "medium", "hard"]),
-    question: z.string(),
-    options: z.array(mcqOptionSchema).length(4),
-    correctAnswer: z.enum(["A", "B", "C", "D"]),
-    explanation: z.string().optional(),
-})
-
-const resultSchema = z.object({
-    testId: z.string().optional(),
-    totalQuestions: z.number().int().min(1),
-    correctAnswers: z.number().int().min(0),
-    wrongAnswers: z.number().int().min(0),
-    unanswered: z.number().int().min(0),
-    score: z.number().int().min(0),
-    percentage: z.number().int().min(0).max(100),
-    timeTaken: z.number().int().min(0), // seconds
-    answers: answerSchema,
-    mcqs: z.array(mcqSchema).optional(),
-})
 
 export async function POST(request: NextRequest) {
     try {
@@ -46,11 +14,6 @@ export async function POST(request: NextRequest) {
 
         const { totalQuestions, correctAnswers, wrongAnswers, unanswered, score, percentage, timeTaken } = body;
 
-        // const parse = resultSchema.safeParse(body)
-        // if (!parse.success) {
-        //     return NextResponse.json({ error: "Invalid payload", details: parse.error.flatten() }, { status: 400 })
-        // }
-
         const token = request.cookies.get("session")?.value || request.headers.get("Authorization")?.slice(7)
         if (!token) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -60,21 +23,6 @@ export async function POST(request: NextRequest) {
         if (!payload) {
             return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 })
         }
-
-        // const {
-
-        //     totalQuestions,
-        //     correctAnswers,
-        //     wrongAnswers,
-        //     unanswered,
-        //     score,
-        //     percentage,
-        //     timeTaken,
-        //     answers,
-        //     mcqs,
-        // } = parse.data
-
-        // const generatedTestId = testId ?? crypto.randomUUID()
 
         // Normalize timeTaken into integer seconds
         const timeTakenSeconds = (() => {
@@ -119,9 +67,7 @@ export async function POST(request: NextRequest) {
             { status: 201 },
         )
     } catch (error) {
-        console.log(error, "error")
-        const message = error instanceof Error ? error.message : "Unknown error"
-        console.error("save-test-result error:", message)
+        // const message = error instanceof Error ? error.message : "Unknown error"
         return NextResponse.json({ error: "Failed to save test result" }, { status: 500 })
     }
 }

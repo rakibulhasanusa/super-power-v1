@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 
 export function useTimer(totalMinutes: number) {
-    const [timeLeft, setTimeLeft] = useState(totalMinutes * 60) // Convert to seconds
+    const [timeLeft, setTimeLeft] = useState(totalMinutes * 60)
     const [isRunning, setIsRunning] = useState(false)
     const [hasEnded, setHasEnded] = useState(false)
     const [startTime, setStartTime] = useState<number | null>(null)
