@@ -47,7 +47,7 @@ src/
 ## Local Development
 
 ### Prerequisites
-- Node.js 18+ and pnpm (or npm/yarn)
+- Node.js 22+ and pnpm (or npm/yarn)
 - OpenAI API key
 - Upstash Redis database (REST URL and token)
 
