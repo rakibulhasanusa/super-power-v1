@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 import * as jose from "jose"
 
-const PUBLIC_PATHS = ["/", "/login", "/register"]
+const PUBLIC_PATHS = ["/", "/login", "/register", "/categories"];
 const PROTECTED_AUTH_PATHS = ["/login", "/register"]
 const PROTECTED_ROUTES = ["/dashboard", "/mcq"]
 const PROTECTED_API_ROUTES = ["/api/generate-mcq", "/api/me", "/api/logout"]
@@ -25,15 +25,15 @@ export async function proxy(request: NextRequest) {
         }
     }
 
-    // If authenticated and trying to access login/register, redirect to dashboard
+    // If authenticated and trying to access login/register, redirect to categories
     if (isAuthenticated && PROTECTED_AUTH_PATHS.includes(pathname)) {
-        console.log("Authenticated user trying to access auth page, redirecting to dashboard")
-        return NextResponse.redirect(new URL("/dashboard", request.url))
+        // console.log("Authenticated user trying to access auth page, redirecting to categories")
+        return NextResponse.redirect(new URL("/categories", request.url))
     }
 
     // If path is public and not an auth path, allow access
     if (PUBLIC_PATHS.includes(pathname) && !PROTECTED_AUTH_PATHS.includes(pathname)) {
-        console.log("Path is public, allowing access")
+        // console.log("Path is public, allowing access")
         return NextResponse.next()
     }
 
