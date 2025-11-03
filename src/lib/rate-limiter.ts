@@ -48,7 +48,6 @@ export function getClientIP(request: Request): string {
     const forwarded = request.headers.get("x-forwarded-for")
     const realIP = request.headers.get("x-real-ip")
 
-    console.log({ request });
 
     if (forwarded) {
         return forwarded.split(",")[0].trim()
@@ -59,5 +58,5 @@ export function getClientIP(request: Request): string {
 
 export function logRateLimit(ip: string, allowed: boolean, remaining: number): void {
     const status = allowed ? "ALLOWED" : "BLOCKED"
-    console.log(`[RATE_LIMIT_${status}] IP: ${ip}, Remaining: ${remaining}`)
+    // console.log(`[RATE_LIMIT_${status}] IP: ${ip}, Remaining: ${remaining}`)
 }

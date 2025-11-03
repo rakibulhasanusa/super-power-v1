@@ -43,7 +43,6 @@ const NavbarAvatar = () => {
             router.refresh()
         } catch (error) {
             toast.error("Logout failed")
-            console.error("Logout error:", error)
         } finally {
             setIsLoggingOut(false)
         }

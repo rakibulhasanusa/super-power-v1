@@ -117,7 +117,6 @@ const TestSetup: React.FC<TestSetupProps> = ({ onStartTest }) => {
                 setError("Failed to generate test questions")
             }
         } catch (error) {
-            console.error("Failed to generate test:", error)
             setError("Network error. Please check your connection and try again.")
         } finally {
             setLoading(false)
