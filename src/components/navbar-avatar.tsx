@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useUser } from '@/context/user-context';
 import { useState, useCallback } from 'react';
+import { AvatarImage } from '@radix-ui/react-avatar';
 
 const NavbarAvatar = () => {
     const router = useRouter()
@@ -80,8 +81,9 @@ const NavbarAvatar = () => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant='secondary' size='icon' className='overflow-hidden rounded-full'>
+                <Button variant='secondary' size='icon' className='overflow-hidden cursor-pointer rounded-full'>
                     <Avatar className="ring-2 ring-green-500 ring-offset-2 ring-offset-background">
+                        <AvatarImage src={"https://github.com/shadcn.png"} alt={user?.name || 'User Avatar'} />
                         <AvatarFallback>{getUserInitials()}</AvatarFallback>
                     </Avatar>
                 </Button>
@@ -90,9 +92,9 @@ const NavbarAvatar = () => {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
-                        <Link href="/dashboard/profile" className="flex items-center cursor-pointer">
+                        <Link href="/dashboard" className="flex items-center cursor-pointer">
                             <UserIcon className="mr-2 h-4 w-4" />
-                            Profile
+                            Dashboard
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem

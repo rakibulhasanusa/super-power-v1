@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, BookOpen, Menu } from "lucide-react"
+import { BookOpen, Menu } from "lucide-react"
 import Link from "next/link"
 import NavbarAvatar from "./navbar-avatar"
 
@@ -31,7 +31,7 @@ export function Header() {
               <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
                 Features
               </Link>
-              <Link href="#categories" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/categories" className="text-muted-foreground hover:text-foreground transition-colors">
                 Categories
               </Link>
               <Link href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
