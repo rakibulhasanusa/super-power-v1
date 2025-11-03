@@ -1,4 +1,4 @@
-import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core"
+import { pgTable, text, varchar, timestamp, jsonb, integer } from "drizzle-orm/pg-core"
 
 export const users = pgTable("users", {
     id: varchar("id", { length: 255 })
@@ -21,7 +21,26 @@ export const sessions = pgTable("sessions", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
 })
 
+export const testResults = pgTable("test_results", {
+    id: varchar("id", { length: 255 })
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
+    userId: varchar("user_id", { length: 255 })
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    totalQuestions: integer("total_questions").notNull(),
+    correctAnswers: integer("correct_answers").notNull(),
+    wrongAnswers: integer("wrong_answers").notNull(),
+    unanswered: integer("unanswered").notNull(),
+    score: integer("score").notNull(),
+    percentage: integer("percentage").notNull(),
+    timeTaken: integer("time_taken_seconds").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
 export type Session = typeof sessions.$inferSelect
 export type NewSession = typeof sessions.$inferInsert
+export type TestResultRow = typeof testResults.$inferSelect
+export type NewTestResultRow = typeof testResults.$inferInsert
